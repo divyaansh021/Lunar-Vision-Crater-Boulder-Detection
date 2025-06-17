@@ -11,17 +11,17 @@ from io import BytesIO
 
 # Load model from GitHub if not present
 @st.cache_resource
+# Load model from Google Drive if not present
+@st.cache_resource
 def load_model():
-    model_url = "https://raw.githubusercontent.com/divyaansh021/Lunar-Vision-Crater-Boulder-Detection/main/ml_model.pt"
-    model_path = "ml_model.pt"
+    model_url = "https://drive.google.com/uc?export=download&id=1eE1BocN7wiTfMuZAxSPmcktuU-7F765F"
+    model_path = "ishaan_model.pt"
 
     if not os.path.exists(model_path):
         with st.spinner("🔄 Downloading model..."):
             try:
-                response = requests.get(model_url)
-                response.raise_for_status()
-                with open(model_path, "wb") as f:
-                    f.write(response.content)
+                import urllib.request
+                urllib.request.urlretrieve(model_url, model_path)
                 st.success("✅ Model downloaded successfully.")
             except Exception as e:
                 st.error(f"❌ Failed to download model: {e}")
@@ -29,6 +29,7 @@ def load_model():
 
     model = YOLO(model_path)
     return model
+
 
 model = load_model()
 
