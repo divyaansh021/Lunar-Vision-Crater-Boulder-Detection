@@ -10,12 +10,15 @@ from io import BytesIO
 
 # Load model
 @st.cache_resource
+@st.cache_resource
 def load_model():
-    model_path = "C:/Users/divya/Downloads/ishaan_model.pt"
+    model_path = "ishaan_model.pt"
     if not os.path.exists(model_path):
-        st.error(f"Model file not found at: {model_path}")
+        st.error("Model file not found. Please upload ishaan_model.pt to your repo.")
         return None
-    return YOLO(model_path)
+    model = YOLO(model_path)
+    return model
+
 
 model = load_model()
 
