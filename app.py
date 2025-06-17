@@ -5,24 +5,34 @@ import cv2
 from ultralytics import YOLO
 import os
 import time
+import requests
 from collections import Counter
 from io import BytesIO
 
-# Load model
-
+# Load model from GitHub if not present
 @st.cache_resource
 def load_model():
+    model_url = "https://raw.githubusercontent.com/divyaansh021/Lunar-Vision-Crater-Boulder-Detection/main/ml_model.pt"
     model_path = "ml_model.pt"
+
     if not os.path.exists(model_path):
-        st.error("Model file not found. Please upload ishaan_model.pt to your repo.")
-        return None
+        with st.spinner("🔄 Downloading model..."):
+            try:
+                response = requests.get(model_url)
+                response.raise_for_status()
+                with open(model_path, "wb") as f:
+                    f.write(response.content)
+                st.success("✅ Model downloaded successfully.")
+            except Exception as e:
+                st.error(f"❌ Failed to download model: {e}")
+                return None
+
     model = YOLO(model_path)
     return model
 
-
 model = load_model()
 
-
+# Object detection function
 def detect_objects(image, selected_classes, conf_thresh):
     if model is None:
         return np.array(image), None
@@ -31,10 +41,7 @@ def detect_objects(image, selected_classes, conf_thresh):
     img_np = np.array(image)
     detected_classes = []
 
-    colors = {
-        "crater": (0, 255, 0),
-        "boulder": (255, 0, 0)
-    }
+    colors = {"crater": (0, 255, 0), "boulder": (255, 0, 0)}
 
     for r in results:
         boxes = r.boxes.xyxy.cpu().numpy()
@@ -55,8 +62,7 @@ def detect_objects(image, selected_classes, conf_thresh):
             label = f"{class_name} {conf:.2f}"
 
             cv2.rectangle(img_np, (x1, y1), (x2, y2), color, 2)
-            cv2.putText(img_np, label, (x1, y1 - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+            cv2.putText(img_np, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
     if detected_classes:
         class_counts = Counter(detected_classes)
@@ -82,7 +88,6 @@ else:
 if nav == "Home":
     st.title("🌕 Lunar Vision: Crater & Boulder Detection")
     st.markdown("---")
-
     st.image("https://images-assets.nasa.gov/image/PIA02442/PIA02442~orig.jpg",
              caption="Apollo 17 – Lunar Surface View (NASA)", use_container_width=True)
 
@@ -92,10 +97,9 @@ if nav == "Home":
     on high-resolution lunar surface imagery.
 
     This tool is developed as part of the **SOI Data Science Challenge 2025** and leverages a trained deep learning model to:
-    
-    - 🧠 **Automatically detect** surface features
-    - 📍 **Assist space missions** in planning safe routes and identifying scientific sites
-    - 🌟 **Enable real-time analysis** from satellite or rover feeds
+    - 🧠 Automatically detect surface features
+    - 📍 Assist space missions in planning safe routes and identifying scientific sites
+    - 🌟 Enable real-time analysis from satellite or rover feeds
     """)
 
     st.subheader("✨ Features & Innovations")
@@ -110,26 +114,19 @@ if nav == "Home":
     st.subheader("🧪 Bonus Features for Extra Credit")
     st.markdown("""
     💡 **1. Instant Detection Interface**  
-    As soon as you upload a lunar image on the **Detect** tab, bounding boxes can be generated immediately with minimal clicks.
-
-    
-    
+    Upload a lunar image on the **Detect** tab, bounding boxes generate with minimal clicks.
 
     🌍 **2. Mission Planning & Rover Navigation Use**  
-    - Generate safe zone maps by detecting hazard-free areas  
-    - Assist rovers in **path planning** by detecting boulders and steep craters in advance
+    - Generate safe zone maps  
+    - Assist rovers in **path planning** using detections
     """)
 
     st.subheader("📚 How to Use This App")
     st.markdown("""
     - Go to **Detect** → Upload a lunar image and click **Detect Now**  
-    - Adjust detection confidence and filter which classes to display  
-    - View results instantly with bounding boxes
-
-    🗺️ Go to the **Report** page to:
-    - See detection metrics and visual comparisons
-    - Analyze sample outputs
-    - Plan improvements and gather insights
+    - Adjust detection confidence and filter classes  
+    - View/download detection results  
+    - See reports and insights in **Report** tab
     """)
 
 # ---- Detect ----
@@ -161,24 +158,20 @@ elif nav == "Detect":
                 st.success("✅ Detection Completed")
                 st.image(result_img, caption="🧠 Detected Features", use_container_width=True)
 
-                # Download
                 buf = BytesIO()
                 result_pil.save(buf, format="PNG")
                 st.download_button("📅 Download Detected Image", buf.getvalue(), file_name="lunar_detection.png", mime="image/png")
 
-               
 # ---- Report ----
 elif nav == "Report":
     st.title("📊 Detection Report")
-    
     st.markdown("---")
-
     st.subheader("🧠 Model Decision Explanation")
     st.markdown("""
     Our YOLO-based model identifies craters and boulders by learning patterns in edges, contrast, and textures specific to lunar terrain.
 
-    - **Craters**: Usually detected by circular depressions with shadow boundaries.
+    - **Craters**: Usually detected by circular depressions with shadow boundaries.  
     - **Boulders**: Identified as sharp-edged, high-contrast objects casting shadows.
 
-    In future, **Grad-CAM** or **attention maps** will help visually explain which parts of the image influenced each prediction.
+    In future, **Grad-CAM** or **attention maps** will help explain which parts of the image influenced each prediction.
     """)
