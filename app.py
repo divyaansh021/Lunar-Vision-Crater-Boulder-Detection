@@ -12,7 +12,7 @@ from io import BytesIO
 @st.cache_resource
 @st.cache_resource
 def load_model():
-    model_path = "ishaan_model.pt"
+    model_path = "ml_model.pt"
     if not os.path.exists(model_path):
         st.error("Model file not found. Please upload ishaan_model.pt to your repo.")
         return None
