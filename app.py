@@ -9,7 +9,7 @@ from collections import Counter
 from io import BytesIO
 
 # Load model
-@st.cache_resource
+
 @st.cache_resource
 def load_model():
     model_path = "ml_model.pt"
