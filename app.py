@@ -165,6 +165,9 @@ elif nav == "Detect":
 
 # ---- Report ----
 # ---- Report ----
+import base64
+import streamlit.components.v1 as components
+
 elif nav == "Report":
     st.title("📊 Detection Report")
     st.markdown("---")
@@ -220,4 +223,23 @@ elif nav == "Report":
 
     st.success("🔍 Thank you for exploring our Detection Report!")
     st.markdown("*— Team Chaand Sitaare*")
+
+    st.markdown("---")
+    st.subheader("📄 Final Report Document")
+
+    # Read PDF as base64
+    with open("Lunar Vision-SOI Problem Final Report.pdf", "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+
+    # PDF viewer
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800px" type="application/pdf"></iframe>'
+    components.html(pdf_display, height=800)
+
+    # Download button
+    st.download_button(
+        label="📥 Download Full Report",
+        data=base64.b64decode(base64_pdf),
+        file_name="Lunar Vision-SOI Problem Final Report.pdf",
+        mime="application/pdf"
+    )
 
