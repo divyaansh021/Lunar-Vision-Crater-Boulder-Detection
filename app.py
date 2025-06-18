@@ -22,7 +22,7 @@ def load_model():
             try:
                 url = f"https://drive.google.com/uc?id={google_drive_id}"
                 gdown.download(url, model_path, quiet=False)
-                st.success("✅ Model downloaded successfully.")
+                
             except Exception as e:
                 st.error(f"❌ Failed to download model: {e}")
                 return None
@@ -81,10 +81,7 @@ def detect_objects(image, selected_classes, conf_thresh):
 st.sidebar.title("🔧 Settings")
 nav = st.sidebar.radio("Navigate", ["Home", "Detect", "Report"])
 
-if model:
-    st.sidebar.success("✅ Model loaded successfully")
-else:
-    st.sidebar.error("❌ Model not loaded")
+
 
 # ---- Home ----
 if nav == "Home":
