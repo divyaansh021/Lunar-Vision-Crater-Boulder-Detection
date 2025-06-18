@@ -8,7 +8,8 @@ import time
 import requests
 from collections import Counter
 from io import BytesIO
-
+import base64
+import streamlit.components.v1 as components
 import gdown
 
 @st.cache_resource
@@ -163,10 +164,9 @@ elif nav == "Detect":
                 result_pil.save(buf, format="PNG")
                 st.download_button("📅 Download Detected Image", buf.getvalue(), file_name="lunar_detection.png", mime="image/png")
 
+
 # ---- Report ----
-# ---- Report ----
-import base64
-import streamlit.components.v1 as components
+
 
 elif nav == "Report":
     st.title("📊 Detection Report")
