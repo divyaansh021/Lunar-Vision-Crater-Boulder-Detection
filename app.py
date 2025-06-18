@@ -232,8 +232,7 @@ elif nav == "Report":
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
 
     # PDF viewer
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800px" type="application/pdf"></iframe>'
-    components.html(pdf_display, height=800)
+  
 
     # Download button
     st.download_button(
