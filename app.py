@@ -164,15 +164,60 @@ elif nav == "Detect":
                 st.download_button("📅 Download Detected Image", buf.getvalue(), file_name="lunar_detection.png", mime="image/png")
 
 # ---- Report ----
+# ---- Report ----
 elif nav == "Report":
     st.title("📊 Detection Report")
     st.markdown("---")
-    st.subheader("🧠 Model Decision Explanation")
+
+    st.subheader("🧠 Model Performance Summary")
     st.markdown("""
-    Our YOLO-based model identifies craters and boulders by learning patterns in edges, contrast, and textures specific to lunar terrain.
+    Our detection model is based on **YOLOv8n (nano)**, trained on high-resolution lunar surface images to identify **craters** and **boulders**.
 
-    - **Craters**: Usually detected by circular depressions with shadow boundaries.  
-    - **Boulders**: Identified as sharp-edged, high-contrast objects casting shadows.
-
-    In future, **Grad-CAM** or **attention maps** will help explain which parts of the image influenced each prediction.
+    **Final Evaluation Metrics:**
+    - 🔍 mAP@0.5: **0.8596**
+    - 📊 mAP@0.5:0.95: **0.6526**
+    - 🎯 Precision: **0.8142**
+    - 📈 Recall: **0.7635**
     """)
+
+    st.subheader("🧪 Model Training Insights")
+    st.markdown("""
+    - Trained using **Adam optimizer** with 10 epochs and batch size 8  
+    - **Image augmentations** (flipping, brightness) were key to generalization  
+    - Used YOLOv8’s **pretrained weights** for transfer learning  
+    - Dataset imbalance affected **boulder prediction confidence**
+    """)
+
+    st.subheader("🧠 Model Decision Logic")
+    st.markdown("""
+    The model detects objects by learning distinct spatial and textural patterns:
+    
+    - **Craters**: Circular depressions with shadow edges  
+    - **Boulders**: Small, high-contrast, sharply bounded regions often with cast shadows  
+    """)
+
+    st.subheader("📷 Visualization Strategy")
+    st.markdown("""
+    - Blue boxes: **Craters**  
+    - Red boxes: **Boulders**  
+    - Saved both `.txt` label files and overlaid detection images  
+    """)
+
+    st.subheader("🌍 Real-World Applications")
+    st.markdown("""
+    - 🔧 **Rover navigation**: Identifying safe or risky terrain  
+    - 🪨 **Geological studies**: Automated crater counts for surface aging  
+    - 🛰️ **Mission planning**: Filtering flat zones for landing or resource extraction  
+    """)
+
+    st.subheader("🚀 Future Improvements")
+    st.markdown("""
+    - Fine-tuning on **YOLOv8m/l** for better accuracy  
+    - Incorporating **elevation/radar metadata** for boulder detection  
+    - Adding **Grad-CAM or attention maps** for explainable AI  
+    - Improving UI with image comparison & exportable reports  
+    """)
+
+    st.success("🔍 Thank you for exploring our Detection Report!")
+    st.markdown("*— Team Chaand Sitaare*")
+
